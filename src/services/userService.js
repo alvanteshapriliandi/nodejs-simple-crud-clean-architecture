@@ -1,30 +1,29 @@
 const UserRepository = require('../repositories/userRepository')
+const { ValidationUtils } = require('../utils/validationUtils')
 const User = require('../models/user')
-
 class UserService {
 
-    getAllUsers () {
-        return UserRepository.getAllUsers()
+    async getAllUsers () {
+        return await UserRepository.getAllUsers()
     }
 
-    getUserById (id) {
-        return UserRepository.getUserById(id)
+    async getUserById (id) {
+        return await UserRepository.getUserById(id)
     }
 
-    createUser (data) {
-        const newUser = new User(data.id, data.name, data.email, data.age)
-        UserRepository.createUser(newUser)
-        return newUser
+    async createUser (data) {
+
+        ValidationUtils.validateUserData(data)
+        return await UserRepository.createUser(data)
     }
 
-    updateUser (id, data) {
-        const updateUser = new User(data.id, data.name, data.email, data.age)
-        UserRepository.updateUser(id, updateUser)
-        return updateUser
+    async updateUser (id, data) {
+        ValidationUtils.validateUserData(data)
+        return await UserRepository.updateUser(id, data)
     }
 
-    deleteUser (id) {
-        UserRepository.deleteUser(id)
+    async deleteUser (id) {
+        return await UserRepository.deleteUser(id)
     }
 }
 

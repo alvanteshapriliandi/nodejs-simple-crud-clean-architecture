@@ -1,26 +1,26 @@
 const UserService = require('../services/userService')
-const { ValidationError, ValidationUtils } = require('../utils/validationUtils')
+const { ValidationError } = require('../utils/validationUtils')
 
 class UserContoller {
-    getAllUsers (req, res) {
-        const users = UserService.getAllUsers()
+
+    async getAllUsers (req, res) {
+        const users = await UserService.getAllUsers()
         res.end(JSON.stringify(users))
     }
 
-    getUserById (req, res, id) {
-        const user = UserService.getUserById(id)
+    async getUserById (req, res, id) {
+        const user = await UserService.getUserById(id)
         if (user) {
             res.end(JSON.stringify(user))
         } else {
             res.statusCode = 404
-            res.end('User not found!')
+            res.end(JSON.stringify({ error: 'User not found' }))
         }
     }
 
-    createUser (req, res, data) {
+    async createUser (req, res, data) {
         try {
-            ValidationUtils.validateUserData(data)
-            const user = UserService.createUser(data)
+            const user = await UserService.createUser(data)
             res.statusCode = 201
             res.end(JSON.stringify(user))
         } catch (error) {
@@ -34,10 +34,9 @@ class UserContoller {
         }
     }
 
-    updateUser (req, res, id, data) {
+    async updateUser (req, res, id, data) {
         try {
-            ValidationUtils.validateUserData(data)
-            const user = UserService.updateUser(id, data)
+            const user = await UserService.updateUser(id, data)
             res.end(JSON.stringify(user))
         } catch (error) {
             if (error instanceof ValidationError) {
@@ -50,8 +49,8 @@ class UserContoller {
         }
     }
 
-    deleteUser (req, res, id) {
-        const user = UserService.deleteUser(id)
+    async deleteUser (req, res, id) {
+        await UserService.deleteUser(id)
         res.statusCode = 204
         res.end()
     }
