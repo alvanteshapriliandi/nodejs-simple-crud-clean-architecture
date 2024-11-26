@@ -18,7 +18,6 @@ class UserService {
     }
 
     updateUser (id, data) {
-        console.log(data)
         const updateUser = new User(data.id, data.name, data.email, data.age)
         UserRepository.updateUser(id, updateUser)
         return updateUser

@@ -1,4 +1,5 @@
 const UserService = require('../services/userService')
+const { ValidationError, ValidationUtils } = require('../utils/validationUtils')
 
 class UserContoller {
     getAllUsers (req, res) {
@@ -17,14 +18,36 @@ class UserContoller {
     }
 
     createUser (req, res, data) {
-        const user = UserService.createUser(data)
-        res.statusCode = 201
-        res.end(JSON.stringify(user))
+        try {
+            ValidationUtils.validateUserData(data)
+            const user = UserService.createUser(data)
+            res.statusCode = 201
+            res.end(JSON.stringify(user))
+        } catch (error) {
+            if (error instanceof ValidationError) {
+                res.statusCode = 400
+                res.end(JSON.stringify({error: error.message}))
+            } else {
+                res.statusCode = 500
+                res.end(JSON.stringify({error: 'Internal Server Error'}))
+            }
+        }
     }
 
     updateUser (req, res, id, data) {
-        const user = UserService.updateUser(id, data)
-        res.end(JSON.stringify(user))
+        try {
+            ValidationUtils.validateUserData(data)
+            const user = UserService.updateUser(id, data)
+            res.end(JSON.stringify(user))
+        } catch (error) {
+            if (error instanceof ValidationError) {
+                res.statusCode = 400
+                res.end(JSON.stringify({error: error.message}))
+            } else {
+                res.statusCode = 500
+                res.end(JSON.stringify({error: 'Internal Server Error'}))
+            }
+        }
     }
 
     deleteUser (req, res, id) {
